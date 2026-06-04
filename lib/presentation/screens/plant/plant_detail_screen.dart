@@ -21,11 +21,24 @@ class PlantDetailScreen extends StatefulWidget {
 }
 
 class _PlantDetailScreenState extends State<PlantDetailScreen> {
+  List<DateTime> _wateringHistory = [];
+  bool _historyLoaded = false;
+
+  void _loadHistory(PlantRepository repo) {
+    if (_historyLoaded) return;
+    _historyLoaded = true;
+    repo.getWateringHistory(widget.plantId).then((history) {
+      if (mounted) setState(() => _wateringHistory = history);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final plantRepo = context.watch<PlantRepository>();
     final plant = plantRepo.findPlantById(widget.plantId);
     final theme = Theme.of(context);
+
+    _loadHistory(plantRepo);
 
     if (plant == null) {
       return Scaffold(
@@ -162,6 +175,10 @@ class _PlantDetailScreenState extends State<PlantDetailScreen> {
                       final bool success =
                           await plantRepo.waterPlant(plant.id);
                       if (success && context.mounted) {
+                        // Atualiza histórico local imediatamente
+                        plantRepo.getWateringHistory(plant.id).then((h) {
+                          if (mounted) setState(() => _wateringHistory = h);
+                        });
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content:
@@ -190,6 +207,20 @@ class _PlantDetailScreenState extends State<PlantDetailScreen> {
                     ),
                     child: const Text('🌿 Ver Análise de Saúde'),
                   ),
+                  if (plant.vegetableId != null) ...[
+                    const SizedBox(height: 12),
+                    ElevatedButton(
+                      onPressed: () => context.go(
+                        '/plant/${plant.id}/care-plan?veg=${plant.vegetableId}&name=${Uri.encodeComponent(plant.name)}',
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(double.infinity, 48),
+                        backgroundColor: AppTheme.primaryGreen,
+                      ),
+                      child: const Text('📋 Plano de Cuidados Completo',
+                          style: TextStyle(color: Colors.white)),
+                    ),
+                  ],
                   const SizedBox(height: 24),
                   _SectionTitle(title: 'Status atual'),
                   const SizedBox(height: 12),
@@ -259,6 +290,10 @@ class _PlantDetailScreenState extends State<PlantDetailScreen> {
                               '${plant.targetTemperature.round()}°C'),
                     ],
                   ),
+                  const SizedBox(height: 24),
+                  _SectionTitle(title: 'Histórico de regas'),
+                  const SizedBox(height: 12),
+                  _WateringHistoryList(history: _wateringHistory),
                   const SizedBox(height: 24),
                   Center(
                     child: Text(
@@ -604,4 +639,72 @@ class _ConfigItem {
   final String label, value;
   _ConfigItem(
       {required this.icon, required this.label, required this.value});
+}
+
+class _WateringHistoryList extends StatelessWidget {
+  final List<DateTime> history;
+  const _WateringHistoryList({required this.history});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    if (history.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isDark ? AppTheme.cardDark : Colors.white,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Center(
+          child: Text(
+            'Nenhuma rega registrada ainda',
+            style: TextStyle(
+              fontSize: 13,
+              color: theme.colorScheme.onSurface.withAlpha((0.5 * 255).round()),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? AppTheme.cardDark : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        children: history.asMap().entries.map((entry) {
+          final isLast = entry.key == history.length - 1;
+          final date = entry.value;
+          return Column(
+            children: [
+              ListTile(
+                leading: const Text('💧', style: TextStyle(fontSize: 20)),
+                title: Text(
+                  DateFormat('dd/MM/yyyy').format(date),
+                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                ),
+                trailing: Text(
+                  DateFormat('HH:mm').format(date),
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: theme.colorScheme.onSurface.withAlpha((0.5 * 255).round()),
+                  ),
+                ),
+                dense: true,
+              ),
+              if (!isLast)
+                Divider(
+                  height: 1,
+                  indent: 52,
+                  color: theme.colorScheme.onSurface.withAlpha((0.07 * 255).round()),
+                ),
+            ],
+          );
+        }).toList(),
+      ),
+    );
+  }
 }

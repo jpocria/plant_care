@@ -32,6 +32,7 @@ class PlantModel {
   final double? currentTemperature;
   final String? location;
   final Map<String, dynamic>? sensorConfig;
+  final String? vegetableId; // id da hortaliça base (care plan)
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -52,6 +53,7 @@ class PlantModel {
     this.currentTemperature,
     this.location,
     this.sensorConfig,
+    this.vegetableId,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -81,6 +83,7 @@ class PlantModel {
       currentTemperature: (data['currentTemperature'] as num?)?.toDouble(),
       location: data['location'] as String?,
       sensorConfig: data['sensorConfig'] as Map<String, dynamic>?,
+      vegetableId: data['vegetableId'] as String?,
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       updatedAt: (data['updatedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
     );
@@ -103,6 +106,7 @@ class PlantModel {
       'currentTemperature': currentTemperature,
       'location': location?.trim(),
       'sensorConfig': sensorConfig,
+      'vegetableId': vegetableId,
     };
   }
 
@@ -121,6 +125,7 @@ class PlantModel {
     double? currentTemperature,
     String? location,
     Map<String, dynamic>? sensorConfig,
+    String? vegetableId,
   }) {
     return PlantModel(
       id: id,
@@ -139,6 +144,7 @@ class PlantModel {
       currentTemperature: currentTemperature ?? this.currentTemperature,
       location: location ?? this.location,
       sensorConfig: sensorConfig ?? this.sensorConfig,
+      vegetableId: vegetableId ?? this.vegetableId,
       createdAt: createdAt,
       updatedAt: DateTime.now(),
     );

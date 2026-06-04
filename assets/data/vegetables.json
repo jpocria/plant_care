@@ -1,0 +1,251 @@
+[
+  {
+    "id": "alface",
+    "name": "Alface",
+    "emoji": "🥬",
+    "scientificName": "Lactuca sativa",
+    "planting": {
+      "bestSeason": "Outono e Inverno (clima ameno)",
+      "plantingMethod": "Mudas (transplante 20-30 dias após semeadura)",
+      "spacing": "25-30 cm entre plantas",
+      "depthCm": 0.5,
+      "germinationDays": "4-10 dias"
+    },
+    "watering": {
+      "frequencyPerWeek": 5,
+      "amountMl": 200,
+      "bestTime": "Manhã cedo ou final da tarde",
+      "tip": "Manter solo úmido, nunca encharcado. Evitar molhar folhas."
+    },
+    "fertilization": [
+      "Composto orgânico no preparo do solo (2-3 L/m²)",
+      "Adubação de cobertura com húmus a cada 15 dias",
+      "NPK 4-14-8 no plantio (opcional)"
+    ],
+    "pests": [
+      "Pulgões - solução de sabão neutro ou óleo de neem",
+      "Lesmas e caracóis - armadilhas com cerveja",
+      "Lagartas - inseticida biológico (Bacillus thuringiensis)"
+    ],
+    "harvest": {
+      "daysToHarvest": 50,
+      "harvestMethod": "Corte das folhas externas ou planta inteira",
+      "indicators": "Folhas grandes e bem formadas, antes do florescimento"
+    },
+    "environment": {
+      "idealTemperatureC": "15-22",
+      "humidity": "60-70%",
+      "lightHours": "4-6 horas de sol direto",
+      "tolerates": "Meia-sombra"
+    },
+    "soil": {
+      "type": "Franco-arenoso, bem drenado e rico em matéria orgânica",
+      "ph": "6.0-6.8",
+      "preparation": "Revolver 20 cm, adicionar composto orgânico"
+    },
+    "calendar": {
+      "sowingMonths": [2, 3, 4, 8, 9, 10],
+      "harvestMonths": [4, 5, 6, 10, 11, 12]
+    }
+  },
+  {
+    "id": "manjericao",
+    "name": "Manjericão",
+    "emoji": "🌿",
+    "scientificName": "Ocimum basilicum",
+    "planting": {
+      "bestSeason": "Primavera e Verão",
+      "plantingMethod": "Mudas (semeadura em bandeja, transplante 30-40 dias)",
+      "spacing": "30-40 cm entre plantas",
+      "depthCm": 0.5,
+      "germinationDays": "5-14 dias"
+    },
+    "watering": {
+      "frequencyPerWeek": 4,
+      "amountMl": 250,
+      "bestTime": "Manhã",
+      "tip": "Regar na base, evitar molhar folhas. Não deixar solo secar completamente."
+    },
+    "fertilization": [
+      "Composto orgânico no preparo (3 L/m²)",
+      "Húmus de minhoca a cada 30 dias",
+      "Evitar excesso de nitrogênio (reduz aroma)"
+    ],
+    "pests": [
+      "Pulgões - óleo de neem",
+      "Lagartas - inspeção manual",
+      "Fungos (míldio) - melhorar ventilação, evitar encharcamento"
+    ],
+    "harvest": {
+      "daysToHarvest": 60,
+      "harvestMethod": "Colheita dos ramos superiores, cortando acima do par de folhas",
+      "indicators": "Planta com 4-6 pares de folhas e aroma intenso"
+    },
+    "environment": {
+      "idealTemperatureC": "18-27",
+      "humidity": "50-70%",
+      "lightHours": "6+ horas de sol direto",
+      "tolerates": "Sol pleno"
+    },
+    "soil": {
+      "type": "Fértil, bem drenado, rico em matéria orgânica",
+      "ph": "6.0-7.0",
+      "preparation": "Solo solto e aerado, com boa drenagem"
+    },
+    "calendar": {
+      "sowingMonths": [9, 10, 11, 12, 1, 2],
+      "harvestMonths": [11, 12, 1, 2, 3, 4]
+    }
+  },
+  {
+    "id": "tomate",
+    "name": "Tomate",
+    "emoji": "🍅",
+    "scientificName": "Solanum lycopersicum",
+    "planting": {
+      "bestSeason": "Primavera e Verão",
+      "plantingMethod": "Mudas (semeadura 45-60 dias antes, transplante)",
+      "spacing": "50-80 cm entre plantas",
+      "depthCm": 1.0,
+      "germinationDays": "6-12 dias"
+    },
+    "watering": {
+      "frequencyPerWeek": 4,
+      "amountMl": 500,
+      "bestTime": "Manhã cedo",
+      "tip": "Regar na base, evitar molhar folhas para prevenir fungos. Cobertura morta ajuda."
+    },
+    "fertilization": [
+      "Composto orgânico abundante (5 L/m²)",
+      "NPK 4-14-8 no plantio",
+      "Adubação de cobertura quinzenal com NPK 10-10-10 ou húmus",
+      "Cálcio para evitar podridão apical"
+    ],
+    "pests": [
+      "Pulgões e mosca-branca - óleo de neem",
+      "Lagarta-do-tomateiro - Bacillus thuringiensis",
+      "Broca-pequena - armadilhas com feromônio",
+      "Requeima (Phytophthora) - fungicida cúprico, rotação de cultura"
+    ],
+    "harvest": {
+      "daysToHarvest": 90,
+      "harvestMethod": "Colheita manual dos frutos maduros",
+      "indicators": "Frutos com cor uniforme e levemente macios ao toque"
+    },
+    "environment": {
+      "idealTemperatureC": "20-28",
+      "humidity": "50-70%",
+      "lightHours": "6-8 horas de sol direto",
+      "tolerates": "Necessita tutor/estaquia para suportar peso"
+    },
+    "soil": {
+      "type": "Profundo, fértil, bem drenado, rico em matéria orgânica",
+      "ph": "6.0-6.8",
+      "preparation": "Cavar 30 cm, adicionar composto e calcário se necessário"
+    },
+    "calendar": {
+      "sowingMonths": [8, 9, 10, 1, 2],
+      "harvestMonths": [11, 12, 1, 2, 3, 4, 5]
+    }
+  },
+  {
+    "id": "cenoura",
+    "name": "Cenoura",
+    "emoji": "🥕",
+    "scientificName": "Daucus carota",
+    "planting": {
+      "bestSeason": "Outono e Inverno (clima ameno)",
+      "plantingMethod": "Semeadura direta no local definitivo",
+      "spacing": "5-8 cm entre plantas (desbaste após germinação)",
+      "depthCm": 0.5,
+      "germinationDays": "10-21 dias"
+    },
+    "watering": {
+      "frequencyPerWeek": 4,
+      "amountMl": 300,
+      "bestTime": "Manhã",
+      "tip": "Manter solo úmido na fase inicial. Reduzir quando raízes começarem a engrossar."
+    },
+    "fertilization": [
+      "Composto orgânico bem curtido (2 L/m²)",
+      "Evitar esterco fresco (causa bifurcação)",
+      "NPK 4-14-8 no plantio",
+      "Cobertura com húmus a cada 30 dias"
+    ],
+    "pests": [
+      "Larva-arame - rotação de cultura, armadilhas",
+      "Pulgões - óleo de neem",
+      "Nematoides - solarização do solo, plantio de cravo-de-defunto",
+      "Alternária (mancha-foliar) - fungicida cúprico"
+    ],
+    "harvest": {
+      "daysToHarvest": 100,
+      "harvestMethod": "Arrancar com cuidado, regar antes para amolecer solo",
+      "indicators": "Tamanho desejado (geralmente 15-20 cm) e cor laranja intensa"
+    },
+    "environment": {
+      "idealTemperatureC": "15-21",
+      "humidity": "60-70%",
+      "lightHours": "5-6 horas de sol direto",
+      "tolerates": "Meia-sombra em clima quente"
+    },
+    "soil": {
+      "type": "Arenoso, solto, profundo (mínimo 30 cm), sem pedras",
+      "ph": "6.0-6.8",
+      "preparation": "Solo bem solto, sem torrões, pedras ou galhos (causam deformação)"
+    },
+    "calendar": {
+      "sowingMonths": [3, 4, 5, 8, 9, 10],
+      "harvestMonths": [6, 7, 8, 11, 12, 1]
+    }
+  },
+  {
+    "id": "cebolinha",
+    "name": "Cebolinha",
+    "emoji": "🧅",
+    "scientificName": "Allium fistulosum",
+    "planting": {
+      "bestSeason": "Ano todo (prefere clima ameno)",
+      "plantingMethod": "Mudas ou divisão de touceiras",
+      "spacing": "15-20 cm entre plantas",
+      "depthCm": 1.0,
+      "germinationDays": "10-14 dias"
+    },
+    "watering": {
+      "frequencyPerWeek": 4,
+      "amountMl": 200,
+      "bestTime": "Manhã ou final da tarde",
+      "tip": "Manter solo úmido. Tolera curtos períodos de seca."
+    },
+    "fertilization": [
+      "Composto orgânico (2 L/m²)",
+      "Húmus a cada 30 dias",
+      "NPK 10-10-10 mensal em pequenas doses"
+    ],
+    "pests": [
+      "Pulgões - óleo de neem ou calda de sabão",
+      "Tripes - armadilhas adesivas azuis",
+      "Podridão-branca - melhorar drenagem, evitar encharcamento"
+    ],
+    "harvest": {
+      "daysToHarvest": 70,
+      "harvestMethod": "Corte das folhas a 3 cm do solo (rebrotam)",
+      "indicators": "Folhas com 20-30 cm de altura, coloração verde intensa"
+    },
+    "environment": {
+      "idealTemperatureC": "13-24",
+      "humidity": "60-70%",
+      "lightHours": "4-6 horas de sol direto",
+      "tolerates": "Meia-sombra, frio leve"
+    },
+    "soil": {
+      "type": "Franco-arenoso, fértil, bem drenado",
+      "ph": "6.0-7.0",
+      "preparation": "Solo solto com composto orgânico"
+    },
+    "calendar": {
+      "sowingMonths": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+      "harvestMonths": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+    }
+  }
+]

@@ -90,6 +90,7 @@ class PlantRepository extends ChangeNotifier {
     required double targetTemperature,
     required int wateringFrequencyDays,
     String? location,
+    String? vegetableId,
     XFile? imageFile,
   }) async {
     isLoading = true;
@@ -110,6 +111,7 @@ class PlantRepository extends ChangeNotifier {
         'targetHumidity': targetHumidity,
         'targetTemperature': targetTemperature,
         'wateringFrequencyDays': wateringFrequencyDays,
+        'vegetableId': vegetableId,
         'lastWatered': null,
         'nextWatering': Timestamp.fromDate(nextWatering),
         'status': PlantStatus.healthy.name,
@@ -146,6 +148,7 @@ class PlantRepository extends ChangeNotifier {
         targetTemperature: targetTemperature,
         wateringFrequencyDays: wateringFrequencyDays,
         location: location?.trim(),
+        vegetableId: vegetableId,
         nextWatering: nextWatering,
         createdAt: now,
         updatedAt: now,
@@ -202,6 +205,7 @@ class PlantRepository extends ChangeNotifier {
           targetTemperature: updates['targetTemperature'] as double?,
           wateringFrequencyDays: updates['wateringFrequencyDays'] as int?,
           imageUrl: updates['imageUrl'] as String?,
+          vegetableId: updates['vegetableId'] as String?,
         );
       }
 
@@ -225,7 +229,7 @@ class PlantRepository extends ChangeNotifier {
     );
   }
 
-  /// Registra uma rega: atualiza lastWatered e recalcula nextWatering.
+  /// Registra uma rega: atualiza lastWatered, recalcula nextWatering e salva no histórico.
   Future<bool> waterPlant(String plantId) async {
     try {
       final plant = await fetchPlantById(plantId);
@@ -244,6 +248,13 @@ class PlantRepository extends ChangeNotifier {
         },
       );
 
+      // Salva no histórico de regas
+      await _firestoreService.db
+          .collection(_collection)
+          .doc(plantId)
+          .collection('watering_history')
+          .add({'wateredAt': Timestamp.fromDate(now)});
+
       final index = _plants.indexWhere((item) => item.id == plantId);
       if (index != -1) {
         _plants[index] = _plants[index].copyWith(
@@ -257,6 +268,24 @@ class PlantRepository extends ChangeNotifier {
     } catch (e) {
       debugPrint('Erro ao regar planta $plantId: $e');
       return false;
+    }
+  }
+
+  /// Retorna o histórico de regas de uma planta, do mais recente ao mais antigo.
+  Future<List<DateTime>> getWateringHistory(String plantId) async {
+    try {
+      final snap = await _firestoreService.db
+          .collection(_collection)
+          .doc(plantId)
+          .collection('watering_history')
+          .orderBy('wateredAt', descending: true)
+          .get();
+      return snap.docs
+          .map((d) => (d['wateredAt'] as Timestamp).toDate())
+          .toList();
+    } catch (e) {
+      debugPrint('Erro ao buscar histórico de regas: $e');
+      return [];
     }
   }
 

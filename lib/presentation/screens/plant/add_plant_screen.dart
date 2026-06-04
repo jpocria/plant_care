@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:io' show File;
+import 'dart:typed_data';
+import '../../../core/services/care_plan_service.dart';
+import '../../../data/models/care_plan_model.dart';
 import '../../../data/repositories/plant_repository.dart';
 import '../../../data/models/plant_model.dart';
 import '../../theme/app_theme.dart';
@@ -28,6 +32,23 @@ class _AddPlantScreenState extends State<AddPlantScreen> {
   double _targetTemperature = 22.0;
   int _wateringFrequency = 3;
   XFile? _selectedImage;
+  Uint8List? _imageBytes; // para preview no Web
+  String? _selectedVegetableId;
+  List<CarePlanModel> _vegetables = [];
+  bool _loadingVeggies = true;
+
+  @override
+  void initState() {
+    super.initState();
+    CarePlanService().loadAll().then((list) {
+      if (mounted) {
+        setState(() {
+          _vegetables = list;
+          _loadingVeggies = false;
+        });
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -69,7 +90,13 @@ class _AddPlantScreenState extends State<AddPlantScreen> {
                       maxHeight: 1024,
                       imageQuality: 85);
                   if (image != null) {
-                    setState(() => _selectedImage = image);
+                    final bytes = kIsWeb ? await image.readAsBytes() : null;
+                    if (mounted) {
+                      setState(() {
+                        _selectedImage = image;
+                        _imageBytes = bytes;
+                      });
+                    }
                   }
                 },
               ),
@@ -86,7 +113,13 @@ class _AddPlantScreenState extends State<AddPlantScreen> {
                       maxHeight: 1024,
                       imageQuality: 85);
                   if (image != null) {
-                    setState(() => _selectedImage = image);
+                    final bytes = kIsWeb ? await image.readAsBytes() : null;
+                    if (mounted) {
+                      setState(() {
+                        _selectedImage = image;
+                        _imageBytes = bytes;
+                      });
+                    }
                   }
                 },
               ),
@@ -115,6 +148,7 @@ class _AddPlantScreenState extends State<AddPlantScreen> {
       location: _locationController.text.isEmpty
           ? null
           : _locationController.text,
+      vegetableId: _selectedVegetableId,
       imageFile: _selectedImage,
     );
 
@@ -187,9 +221,12 @@ class _AddPlantScreenState extends State<AddPlantScreen> {
                       child: _selectedImage != null
                           ? ClipRRect(
                               borderRadius: BorderRadius.circular(22),
-                              child: Image.file(
-                                  File(_selectedImage!.path),
-                                  fit: BoxFit.cover),
+                              child: kIsWeb
+                                  ? Image.memory(_imageBytes!,
+                                      fit: BoxFit.cover)
+                                  : Image.file(
+                                      File(_selectedImage!.path),
+                                      fit: BoxFit.cover),
                             )
                           : Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -247,6 +284,29 @@ class _AddPlantScreenState extends State<AddPlantScreen> {
                           ))
                       .toList(),
                   onChanged: (v) => setState(() => _selectedType = v!),
+                ),
+                const SizedBox(height: 16),
+                DropdownButtonFormField<String>(
+                  initialValue: _selectedVegetableId,
+                  decoration: const InputDecoration(
+                    labelText: 'Hortaliça base (plano de cuidados)',
+                    prefixIcon:
+                        Icon(Icons.eco_outlined, size: 20),
+                    helperText: 'Opcional: gera um plano completo de cuidados',
+                  ),
+                  items: [
+                    const DropdownMenuItem<String>(
+                      value: null,
+                      child: Text('Nenhuma'),
+                    ),
+                    ..._vegetables.map((v) => DropdownMenuItem<String>(
+                          value: v.id,
+                          child: Text('${v.emoji} ${v.name}'),
+                        )),
+                  ],
+                  onChanged: _loadingVeggies
+                      ? null
+                      : (v) => setState(() => _selectedVegetableId = v),
                 ),
                 const SizedBox(height: 16),
                 CustomTextField(
