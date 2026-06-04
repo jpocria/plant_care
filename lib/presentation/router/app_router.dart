@@ -10,7 +10,6 @@ import '../screens/home/home_screen.dart';
 import '../screens/plant/plant_detail_screen.dart';
 import '../screens/plant/add_plant_screen.dart';
 import '../screens/plant/edit_plant_screen.dart';
-import '../screens/plant_health_detail_screen.dart';
 import '../screens/alerts/alerts_screen.dart';
 import '../screens/profile/profile_screen.dart';
 

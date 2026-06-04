@@ -14,6 +14,7 @@ import '../../../data/repositories/plant_repository.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_text_field.dart';
 import '../../widgets/loading_overlay.dart';
+import '../../widgets/theme_toggle_widget.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -351,6 +352,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 _buildStatsRow(),
                 const SizedBox(height: 28),
                 _isEditing ? _buildEditForm() : _buildInfoCard(theme),
+                const SizedBox(height: 28),
+                const ThemeToggleWidget(isCompact: false),
                 const SizedBox(height: 28),
                 _buildSettingsSection(theme),
                 const SizedBox(height: 16),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:plant_care/data/models/plant_model.dart';
 import 'package:plant_care/data/models/sensor_reading.dart';
 import 'package:plant_care/core/services/plant_health_analyzer.dart';

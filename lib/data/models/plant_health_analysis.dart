@@ -41,15 +41,6 @@ class PlantHealthAnalysis {
     required this.daysUntilNextWatering,
   });
 
-  /// Determina status baseado no score
-  static String _scoreToStatus(int score) {
-    if (score >= 85) return 'excellent';
-    if (score >= 70) return 'good';
-    if (score >= 55) return 'fair';
-    if (score >= 40) return 'poor';
-    return 'critical';
-  }
-
   /// Factory para criar análise vazia/padrão
   factory PlantHealthAnalysis.empty() {
     return PlantHealthAnalysis(
