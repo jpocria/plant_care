@@ -224,50 +224,10 @@ class _PlantDetailScreenState extends State<PlantDetailScreen> {
                   const SizedBox(height: 24),
                   _SectionTitle(title: 'Status atual'),
                   const SizedBox(height: 12),
-                  GridView.count(
-                    crossAxisCount: 2,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                    childAspectRatio: 1.6,
-                    children: [
-                      _InfoCard(
-                        icon: '💧',
-                        title: 'Última rega',
-                        value: plant.lastWatered != null
-                            ? DateFormat('dd/MM/yyyy')
-                                .format(plant.lastWatered!)
-                            : 'Nunca',
-                        color: const Color(0xFF3B82F6),
-                      ),
-                      _InfoCard(
-                        icon: '📅',
-                        title: 'Próxima rega',
-                        value: plant.nextWatering != null
-                            ? plant.needsWatering
-                                ? 'Hoje!'
-                                : 'Em ${plant.daysUntilWatering}d'
-                            : 'Não configurado',
-                        color: plant.needsWatering
-                            ? AppTheme.errorColor
-                            : AppTheme.successColor,
-                      ),
-                      _InfoCard(
-                        icon: '🌡️',
-                        title: 'Umidade alvo',
-                        value: '${plant.targetHumidity.round()}%',
-                        color: AppTheme.primaryGreen,
-                      ),
-                      _InfoCard(
-                        icon: '🌡️',
-                        title: 'Temperatura alvo',
-                        value:
-                            '${plant.targetTemperature.round()}°C',
-                        color: AppTheme.accentEarth,
-                      ),
-                    ],
-                  ),
+                  // Stats inline compactos (sem cards gigantes)
+                  _StatRow(plant: plant),
+                  const SizedBox(height: 4),
+                  _StatRowSecondary(plant: plant),
                   const SizedBox(height: 24),
                   _SectionTitle(title: 'Configurações'),
                   const SizedBox(height: 12),
@@ -546,44 +506,108 @@ class _SectionTitle extends StatelessWidget {
   }
 }
 
-class _InfoCard extends StatelessWidget {
-  final String icon, title, value;
-  final Color color;
-  const _InfoCard(
-      {required this.icon,
-      required this.title,
-      required this.value,
-      required this.color});
+/// Linha de stats inline (pill horizontal) — sem cards gigantes
+class _StatRow extends StatelessWidget {
+  final PlantModel plant;
+  const _StatRow({required this.plant});
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final lastWatered = plant.lastWatered != null
+        ? DateFormat('dd/MM/yyyy').format(plant.lastWatered!)
+        : 'Nunca';
+    final nextWatering = plant.nextWatering != null
+        ? (plant.needsWatering ? 'Hoje!' : 'Em ${plant.daysUntilWatering}d')
+        : '—';
+    return Row(
+      children: [
+        Expanded(
+            child: _PillStat(
+                icon: '💧', label: 'Última rega', value: lastWatered)),
+        const SizedBox(width: 8),
+        Expanded(
+            child: _PillStat(
+                icon: '📅',
+                label: 'Próxima',
+                value: nextWatering,
+                accent: plant.needsWatering
+                    ? AppTheme.errorColor
+                    : AppTheme.successColor)),
+      ],
+    );
+  }
+}
+
+class _StatRowSecondary extends StatelessWidget {
+  final PlantModel plant;
+  const _StatRowSecondary({required this.plant});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+            child: _PillStat(
+                icon: '💧',
+                label: 'Umidade',
+                value: '${plant.targetHumidity.round()}%')),
+        const SizedBox(width: 8),
+        Expanded(
+            child: _PillStat(
+                icon: '🌡️',
+                label: 'Temp.',
+                value: '${plant.targetTemperature.round()}°C')),
+      ],
+    );
+  }
+}
+
+class _PillStat extends StatelessWidget {
+  final String icon, label, value;
+  final Color? accent;
+  const _PillStat(
+      {required this.icon,
+      required this.label,
+      required this.value,
+      this.accent});
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
-        color: isDark ? AppTheme.cardDark : Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        color: AppTheme.surfaceElevatedDark,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: AppTheme.borderDark, width: 1),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Row(
         children: [
-          Text(icon, style: const TextStyle(fontSize: 22)),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(value,
+          Text(icon, style: const TextStyle(fontSize: 16)),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  label,
+                  style: const TextStyle(
+                    fontSize: 10,
+                    color: AppTheme.textMuted,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Text(
+                  value,
                   style: TextStyle(
-                      fontWeight: FontWeight.w800,
-                      fontSize: 16,
-                      color: color)),
-              Text(title,
-                  style: TextStyle(
-                      fontSize: 11,
-                      color: theme.colorScheme.onSurface
-                          .withAlpha((0.5 * 255).round()))),
-            ],
+                    fontSize: 13,
+                    fontWeight: FontWeight.w800,
+                    color: accent ?? AppTheme.textPrimary,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -591,45 +615,41 @@ class _InfoCard extends StatelessWidget {
   }
 }
 
+/// Configurações inline (sem card branco) — itens com divisores
 class _ConfigCard extends StatelessWidget {
   final List<_ConfigItem> items;
   const _ConfigCard({required this.items});
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    return Container(
-      decoration: BoxDecoration(
-        color: isDark ? AppTheme.cardDark : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        children: items.asMap().entries.map((entry) {
-          final item = entry.value;
-          final isLast = entry.key == items.length - 1;
-          return Column(
+    return Column(
+      children: items.asMap().entries.map((entry) {
+        final item = entry.value;
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+          child: Row(
             children: [
-              ListTile(
-                leading: Icon(item.icon,
-                    color: AppTheme.primaryGreen, size: 20),
-                title: Text(item.label,
-                    style: const TextStyle(fontSize: 14)),
-                trailing: Text(item.value,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w700,
-                        color: AppTheme.primaryGreen)),
-                dense: true,
+              Icon(item.icon, color: AppTheme.neonGreen, size: 18),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  item.label,
+                  style: const TextStyle(
+                      fontSize: 14, color: AppTheme.textSecondary),
+                ),
               ),
-              if (!isLast)
-                Divider(
-                    height: 1,
-                    indent: 52,
-                    color: theme.colorScheme.onSurface.withAlpha((0.07 * 255).round())),
+              Text(
+                item.value,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w800,
+                  color: AppTheme.neonGreen,
+                ),
+              ),
             ],
-          );
-        }).toList(),
-      ),
+          ),
+        );
+      }).toList(),
     );
   }
 }
@@ -641,66 +661,69 @@ class _ConfigItem {
       {required this.icon, required this.label, required this.value});
 }
 
+/// Histórico de regas — pills verticais com fundo surfaceElevatedDark
 class _WateringHistoryList extends StatelessWidget {
   final List<DateTime> history;
   const _WateringHistoryList({required this.history});
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
     if (history.isEmpty) {
       return Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
         decoration: BoxDecoration(
-          color: isDark ? AppTheme.cardDark : Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          color: AppTheme.surfaceElevatedDark,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppTheme.borderDark),
         ),
-        child: Center(
+        child: const Center(
           child: Text(
             'Nenhuma rega registrada ainda',
             style: TextStyle(
-              fontSize: 13,
-              color: theme.colorScheme.onSurface.withAlpha((0.5 * 255).round()),
-            ),
+                fontSize: 13, color: AppTheme.textMuted),
           ),
         ),
       );
     }
 
     return Container(
+      padding: const EdgeInsets.symmetric(vertical: 4),
       decoration: BoxDecoration(
-        color: isDark ? AppTheme.cardDark : Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        color: AppTheme.surfaceElevatedDark,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppTheme.borderDark),
       ),
       child: Column(
-        children: history.asMap().entries.map((entry) {
-          final isLast = entry.key == history.length - 1;
+        children: history.take(5).toList().asMap().entries.map((entry) {
+          final isLast = entry.key == history.take(5).toList().length - 1;
           final date = entry.value;
           return Column(
             children: [
-              ListTile(
-                leading: const Text('💧', style: TextStyle(fontSize: 20)),
-                title: Text(
-                  DateFormat('dd/MM/yyyy').format(date),
-                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 12, vertical: 10),
+                child: Row(
+                  children: [
+                    const Text('💧', style: TextStyle(fontSize: 16)),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        DateFormat('dd/MM/yyyy').format(date),
+                        style: const TextStyle(
+                            fontSize: 13, fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                    Text(
+                      DateFormat('HH:mm').format(date),
+                      style: const TextStyle(
+                          fontSize: 12, color: AppTheme.textMuted),
+                    ),
+                  ],
                 ),
-                trailing: Text(
-                  DateFormat('HH:mm').format(date),
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: theme.colorScheme.onSurface.withAlpha((0.5 * 255).round()),
-                  ),
-                ),
-                dense: true,
               ),
               if (!isLast)
-                Divider(
-                  height: 1,
-                  indent: 52,
-                  color: theme.colorScheme.onSurface.withAlpha((0.07 * 255).round()),
-                ),
+                const Divider(
+                    height: 1, thickness: 1, color: AppTheme.borderDark),
             ],
           );
         }).toList(),

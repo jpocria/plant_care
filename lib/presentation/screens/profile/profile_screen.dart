@@ -321,6 +321,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
           centerTitle: true,
           elevation: 0,
           backgroundColor: colorScheme.surface,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new_rounded),
+            tooltip: 'Voltar',
+            onPressed: () {
+              if (context.canPop()) {
+                context.pop();
+              } else {
+                context.go('/home');
+              }
+            },
+          ),
           actions: [
             if (!_isEditing)
               IconButton(

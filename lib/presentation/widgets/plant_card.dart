@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:intl/intl.dart';
 import '../../data/models/plant_model.dart';
 import '../theme/app_theme.dart';
 
@@ -25,19 +25,6 @@ class PlantCard extends StatelessWidget {
         return AppTheme.warningColor;
       case PlantStatus.critical:
         return AppTheme.errorColor;
-    }
-  }
-
-  String _statusLabel(PlantStatus status) {
-    switch (status) {
-      case PlantStatus.healthy:
-        return 'Saudável';
-      case PlantStatus.needsWater:
-        return 'Precisa de água';
-      case PlantStatus.needsAttention:
-        return 'Atenção necessária';
-      case PlantStatus.critical:
-        return 'Situação crítica';
     }
   }
 
@@ -73,167 +60,164 @@ class PlantCard extends StatelessWidget {
     }
   }
 
+  String _wateringInfo() {
+    if (plant.nextWatering == null) return 'Sem agenda';
+    if (plant.needsWatering) return 'Regar hoje!';
+    if (plant.daysUntilWatering == 0) return 'Regar hoje!';
+    return 'Em ${plant.daysUntilWatering}d';
+  }
+
+  Color _wateringColor() {
+    if (plant.needsWatering) return const Color(0xFF3B82F6);
+    final d = plant.daysUntilWatering;
+    if (d <= 1) return AppTheme.warningColor;
+    return AppTheme.successColor;
+  }
+
+  String _plantAge() {
+    final days = DateTime.now().difference(plant.createdAt).inDays;
+    if (days < 1) return 'plantada hoje';
+    if (days == 1) return 'há 1 dia';
+    if (days < 30) return 'há $days dias';
+    final months = (days / 30).floor();
+    if (months == 1) return 'há 1 mês';
+    return 'há $months meses';
+  }
+
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
     final statusColor = _statusColor(plant.calculatedStatus);
+    final wateringColor = _wateringColor();
+    final currentHumidity = plant.currentHumidity;
+    final humidityProgress = currentHumidity != null
+        ? (currentHumidity / plant.targetHumidity).clamp(0.0, 1.0)
+        : null;
 
     return GestureDetector(
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: isDark ? AppTheme.cardDark : Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withAlpha((isDark ? 0.3 : 0.06 * 255).round()),
-              blurRadius: 16,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          color: AppTheme.surfaceDark,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppTheme.borderDark, width: 1),
         ),
-        child: Column(
+        child: Row(
           children: [
+            // Borda colorida lateral (status)
             Container(
-              height: 3,
+              width: 4,
+              height: 100,
               decoration: BoxDecoration(
                 color: statusColor,
-                borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(20)),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  bottomLeft: Radius.circular(16),
+                ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(14),
-                    child: plant.imageUrl != null
-                        ? CachedNetworkImage(
-                            imageUrl: plant.imageUrl!,
-                            width: 72,
-                            height: 72,
-                            fit: BoxFit.cover,
-                            placeholder: (_, __) =>
-                                _placeholder(),
-                            errorWidget: (_, __, ___) =>
-                                _placeholder(),
-                          )
-                        : _placeholder(),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Linha 1: ícone + nome + status
+                    Row(
                       children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                plant.name,
-                                style: theme.textTheme.titleMedium
-                                    ?.copyWith(
-                                  fontWeight: FontWeight.w800,
-                                  letterSpacing: -0.2,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                        Text(_plantEmoji,
+                            style: const TextStyle(fontSize: 22)),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            plant.name,
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w800,
+                              color: AppTheme.textPrimary,
+                              letterSpacing: -0.2,
                             ),
-                            Text(
-                              _statusEmoji(plant.calculatedStatus),
-                              style: const TextStyle(fontSize: 16),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        Text(plant.type.label,
-                            style: theme.textTheme.bodyMedium
-                                ?.copyWith(fontSize: 13)),
-                        if (plant.location != null) ...[
-                          const SizedBox(height: 2),
-                          Row(
-                            children: [
-                              Icon(Icons.location_on_outlined,
-                                  size: 12,
-                                  color: theme.colorScheme.onSurface
-                                      .withAlpha((0.4 * 255).round())),
-                              const SizedBox(width: 2),
-                              Text(
-                                plant.location!,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: theme.colorScheme.onSurface
-                                      .withAlpha((0.5 * 255).round()),
-                                ),
-                              ),
-                            ],
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                        ],
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 3),
-                              decoration: BoxDecoration(
-                                color:
-                                    statusColor.withAlpha((0.12 * 255).round()),
-                                borderRadius:
-                                    BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                _statusLabel(
-                                    plant.calculatedStatus),
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w700,
-                                  color: statusColor,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            if (plant.nextWatering != null)
-                              Text(
-                                plant.needsWatering
-                                    ? '💧 Regar hoje!'
-                                    : '💧 ${plant.daysUntilWatering}d',
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w600,
-                                  color: plant.needsWatering
-                                      ? const Color(0xFF3B82F6)
-                                      : theme.colorScheme.onSurface
-                                          .withAlpha((0.5 * 255).round()),
-                                ),
-                              ),
-                          ],
+                        ),
+                        Text(
+                          _statusEmoji(plant.calculatedStatus),
+                          style: const TextStyle(fontSize: 16),
                         ),
                       ],
                     ),
-                  ),
-                  if (plant.needsWatering)
+                    // Linha 2: tipo + idade
                     Padding(
-                      padding: const EdgeInsets.only(left: 8),
-                      child: GestureDetector(
-                        onTap: onWater,
-                        child: Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF3B82F6)
-                                .withAlpha((0.12 * 255).round()),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Center(
-                            child: Text('💧',
-                                style: TextStyle(fontSize: 18)),
-                          ),
-                        ),
+                      padding: const EdgeInsets.only(left: 30, top: 2),
+                      child: Text(
+                        '${plant.type.label} · ${_plantAge()}',
+                        style: const TextStyle(
+                            fontSize: 12, color: AppTheme.textMuted),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                ],
+                    // Linha 3: próxima rega + umidade + temp. + botão regar
+                    Padding(
+                      padding: const EdgeInsets.only(left: 30, top: 8),
+                      child: Row(
+                        children: [
+                          // Rega
+                          _MiniInfo(
+                            icon: '💧',
+                            label: plant.needsWatering
+                                ? 'Regar hoje!'
+                                : 'Em ${plant.daysUntilWatering}d',
+                            color: wateringColor,
+                          ),
+                          const SizedBox(width: 12),
+                          // Umidade (se houver)
+                          if (currentHumidity != null) ...[
+                            _MiniInfo(
+                              icon: '💦',
+                              label:
+                                  '${currentHumidity.round()}/${plant.targetHumidity.round()}%',
+                              color: currentHumidity! < plant.targetHumidity * 0.7
+                                  ? AppTheme.warningColor
+                                  : AppTheme.neonGreen,
+                            ),
+                            const SizedBox(width: 12),
+                          ],
+                          // Temperatura (se houver)
+                          if (plant.currentTemperature != null) ...[
+                            _MiniInfo(
+                              icon: '🌡️',
+                              label:
+                                  '${plant.currentTemperature!.round()}°/${plant.targetTemperature.round()}°',
+                              color: AppTheme.amberNeon,
+                            ),
+                            const SizedBox(width: 12),
+                          ],
+                          const Spacer(),
+                          // Botão regar (se precisar)
+                          if (plant.needsWatering)
+                            GestureDetector(
+                              onTap: onWater,
+                              child: Container(
+                                width: 32,
+                                height: 32,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF3B82F6)
+                                      .withAlpha((0.18 * 255).round()),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Center(
+                                  child: Text('💧',
+                                      style: TextStyle(fontSize: 14)),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -241,18 +225,27 @@ class PlantCard extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _placeholder() {
-    return Container(
-      width: 72,
-      height: 72,
-      decoration: BoxDecoration(
-        color: AppTheme.primaryGreen.withAlpha((0.08 * 255).round()),
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Center(
-          child: Text(_plantEmoji,
-              style: const TextStyle(fontSize: 32))),
+class _MiniInfo extends StatelessWidget {
+  final String icon, label;
+  final Color color;
+  const _MiniInfo(
+      {required this.icon, required this.label, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(icon, style: const TextStyle(fontSize: 12)),
+        const SizedBox(width: 3),
+        Text(
+          label,
+          style: TextStyle(
+              fontSize: 12, fontWeight: FontWeight.w800, color: color),
+        ),
+      ],
     );
   }
 }

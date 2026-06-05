@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/gestures.dart';
 import '../../../data/repositories/auth_repository.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/custom_button.dart';
@@ -248,20 +249,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               style: TextStyle(
                                   color: theme.colorScheme.onSurface,
                                   fontSize: 13),
-                              children: const [
-                                TextSpan(text: 'Li e aceito os '),
+                              children: [
+                                const TextSpan(text: 'Li e aceito os '),
                                 TextSpan(
                                   text: 'Termos de Uso',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       color: AppTheme.primaryGreen,
-                                      fontWeight: FontWeight.w700),
+                                      fontWeight: FontWeight.w700,
+                                      decoration: TextDecoration.underline),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () => context
+                                        .push('/auth/terms-of-use'),
                                 ),
-                                TextSpan(text: ' e a '),
+                                const TextSpan(text: ' e a '),
                                 TextSpan(
                                   text: 'Política de Privacidade',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       color: AppTheme.primaryGreen,
-                                      fontWeight: FontWeight.w700),
+                                      fontWeight: FontWeight.w700,
+                                      decoration: TextDecoration.underline),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () => context
+                                        .push('/auth/privacy-policy'),
                                 ),
                               ],
                             ),

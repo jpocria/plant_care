@@ -6,6 +6,8 @@ import '../../data/repositories/auth_repository.dart';
 import '../screens/auth/splash_screen.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/auth/register_screen.dart';
+import '../screens/auth/terms_of_use_screen.dart';
+import '../screens/auth/privacy_policy_screen.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/plant/plant_detail_screen.dart';
 import '../screens/plant/add_plant_screen.dart';
@@ -45,6 +47,14 @@ class AppRouter {
           GoRoute(
             path: '/auth/register',
             builder: (_, __) => const RegisterScreen(),
+          ),
+          GoRoute(
+            path: '/auth/terms-of-use',
+            builder: (_, __) => const TermsOfUseScreen(),
+          ),
+          GoRoute(
+            path: '/auth/privacy-policy',
+            builder: (_, __) => const PrivacyPolicyScreen(),
           ),
           GoRoute(
             path: '/home',

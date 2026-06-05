@@ -415,12 +415,12 @@ class _SliderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? AppTheme.cardDark : Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        color: AppTheme.surfaceElevatedDark,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppTheme.borderDark, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -436,7 +436,7 @@ class _SliderCard extends StatelessWidget {
               Text(subtitle,
                   style: const TextStyle(
                       fontWeight: FontWeight.w800,
-                      color: AppTheme.primaryGreen)),
+                      color: AppTheme.neonGreen)),
             ],
           ),
           Slider(
@@ -444,7 +444,7 @@ class _SliderCard extends StatelessWidget {
             min: min,
             max: max,
             divisions: divisions,
-            activeColor: AppTheme.primaryGreen,
+            activeColor: AppTheme.neonGreen,
             onChanged: onChanged,
           ),
         ],

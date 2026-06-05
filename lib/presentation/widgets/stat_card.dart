@@ -17,37 +17,33 @@ class StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.fromLTRB(12, 12, 12, 10),
       decoration: BoxDecoration(
-        color: isDark ? AppTheme.cardDark : Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha((isDark ? 0.2 : 0.05 * 255).round()),
-            blurRadius: 12,
-            offset: const Offset(0, 3),
-          ),
-        ],
+        color: AppTheme.surfaceDark,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppTheme.borderDark, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: color.withAlpha((0.12 * 255).round()),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Center(
-                child: Text(icon,
-                    style: const TextStyle(fontSize: 18))),
+          Row(
+            children: [
+              Container(
+                width: 28,
+                height: 28,
+                decoration: BoxDecoration(
+                  color: color.withAlpha((0.18 * 255).round()),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Center(
+                    child: Text(icon,
+                        style: const TextStyle(fontSize: 14))),
+              ),
+            ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 8),
           Text(
             value,
             style: TextStyle(
@@ -59,12 +55,13 @@ class StatCard extends StatelessWidget {
           ),
           Text(
             label,
-            style: TextStyle(
-              fontSize: 10,
-              color: theme.colorScheme.onSurface.withAlpha((0.5 * 255).round()),
+            style: const TextStyle(
+              fontSize: 11,
+              color: AppTheme.textMuted,
               fontWeight: FontWeight.w600,
             ),
-            maxLines: 2,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),

@@ -171,11 +171,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          '${alertRepo.unresolvedAlerts.length} alerta(s) pendente(s)',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF8B6914),
-                          ),
+                      '${alertRepo.unresolvedAlerts.length} alerta(s) pendente(s)',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w700,
+                        color: AppTheme.warningColor,
+                      ),
                         ),
                       ),
                       TextButton(
