@@ -52,3 +52,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/data/vegetables.json
+    - assets/logo-plantcare.png

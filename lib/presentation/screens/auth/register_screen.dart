@@ -7,6 +7,7 @@ import '../../theme/app_theme.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_text_field.dart';
 import '../../widgets/loading_overlay.dart';
+import '../../widgets/plant_logo.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -118,6 +119,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // === LOGO OFICIAL PLANTCARE ===
+                  const Center(child: PlantLogo(size: 94)),
+                  const SizedBox(height: 24),
                   Text('Vamos começar!',
                       style: theme.textTheme.headlineLarge
                           ?.copyWith(letterSpacing: -0.5)),

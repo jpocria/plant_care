@@ -6,7 +6,9 @@ import '../../../data/repositories/plant_repository.dart';
 import '../../../data/repositories/alert_repository.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/plant_card.dart';
+import '../../widgets/plant_logo.dart';
 import '../../widgets/stat_card.dart';
+import '../../widgets/theme_fab.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -36,7 +38,6 @@ class _HomeScreenState extends State<HomeScreen> {
     final plantRepo = context.watch<PlantRepository>();
     final alertRepo = context.watch<AlertRepository>();
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
     final userName =
         authRepo.currentUser?.name.split(' ').first ?? 'Usuário';
 
@@ -44,14 +45,25 @@ class _HomeScreenState extends State<HomeScreen> {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            expandedHeight: 180,
+            expandedHeight: 200,
             floating: false,
             pinned: true,
             elevation: 0,
-            backgroundColor: isDark
-                ? AppTheme.backgroundDark
-                : AppTheme.backgroundLight,
+            backgroundColor: theme.scaffoldBackgroundColor,
+            // === LOGO OFICIAL NO LEADING DA SLIVERAPPBAR ===
+            // Única instância do logo na home (sempre visível).
+            leadingWidth: 64,
+            leading: const Padding(
+              padding: EdgeInsets.only(left: 12, top: 8, bottom: 8),
+              child: PlantLogo(size: 47, glow: true),
+            ),
+            title: const SizedBox.shrink(),
             actions: [
+              // === TOGGLE SOL/LUA NO CANTINHO DA TELA ===
+              const Padding(
+                padding: EdgeInsets.only(right: 4),
+                child: Center(child: ThemeFab(size: 40)),
+              ),
               Stack(
                 alignment: Alignment.topRight,
                 children: [
@@ -95,7 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
             flexibleSpace: FlexibleSpaceBar(
               collapseMode: CollapseMode.pin,
               background: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 80, 24, 16),
+                padding: const EdgeInsets.fromLTRB(24, 24, 24, 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -218,7 +230,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
                         if (index == plantRepo.plants.length) {
-                          return const SizedBox(height: 100);
+                          return const SizedBox(height: 120);
                         }
                         final plant = plantRepo.plants[index];
                         return Padding(
@@ -264,7 +276,9 @@ class _EmptyState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('🪴', style: TextStyle(fontSize: 72)),
+            // Logo ornamental no estado vazio, deixando claro a identidade
+            // da marca mesmo sem plantas cadastradas.
+            const PlantLogoImage.square(96),
             const SizedBox(height: 20),
             Text('Nenhuma planta cadastrada',
                 style: theme.textTheme.titleLarge

@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../data/repositories/auth_repository.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/plant_logo.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -53,7 +54,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.primaryGreen,
+      backgroundColor: AppTheme.neonGreen,
       body: Center(
         child: AnimatedBuilder(
           animation: _controller,
@@ -64,34 +65,19 @@ class _SplashScreenState extends State<SplashScreen>
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withAlpha((0.15 * 255).round()),
-                      borderRadius: BorderRadius.circular(28),
-                    ),
-                    child: const Center(
-                      child: Text('🌱',
-                          style: TextStyle(fontSize: 52)),
-                    ),
+                  // === LOGO OFICIAL PLANTCARE (versão "pílula") ===
+                  PlantLogoPill(
+                    height: 143,
+                    background: Colors.white.withAlpha((0.18 * 255).round()),
+                    plantColor: Colors.white,
+                    textColor: Colors.white,
                   ),
                   const SizedBox(height: 24),
-                  const Text(
-                    'PlantCare',
-                    style: TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.w900,
-                      color: Colors.white,
-                      letterSpacing: -1,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
                   Text(
                     'Suas plantas, sempre saudáveis',
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.white.withAlpha((0.8 * 255).round()),
+                      color: Colors.white.withAlpha((0.85 * 255).round()),
                       fontWeight: FontWeight.w500,
                     ),
                   ),

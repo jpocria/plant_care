@@ -11,6 +11,7 @@ import '../../../core/services/storage_service.dart';
 import '../../../data/models/user_model.dart';
 import '../../../data/repositories/auth_repository.dart';
 import '../../../data/repositories/plant_repository.dart';
+import '../../theme/app_theme.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_text_field.dart';
 import '../../widgets/loading_overlay.dart';
@@ -175,7 +176,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (confirmed == true) {
       await authService.signOut();
       if (mounted) {
-        context.go('/login');
+        context.go('/auth/login');
       }
     }
   }
@@ -210,7 +211,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       // deleteAccount(password) faz reauthenticate internamente
       await authService.deleteAccount(password: password);
       if (mounted) {
-        context.go('/login');
+        context.go('/auth/login');
       }
     } catch (e) {
       _showSnackBar('Erro ao excluir conta: $e', isError: true);
@@ -285,6 +286,93 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  /// "Sobre o app" customizado, com o logotipo (PNG oficial) em destaque.
+  void _showCustomAbout() {
+    showDialog<void>(
+      context: context,
+      builder: (ctx) {
+        final theme = Theme.of(ctx);
+        return Dialog(
+          backgroundColor: theme.colorScheme.surface,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(24, 28, 24, 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Círculo ornamental com o PNG oficial
+                Container(
+                  width: 110,
+                  height: 110,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: theme.colorScheme.surfaceContainerHighest
+                        .withAlpha((0.3 * 255).round()),
+                    border: Border.all(
+                      color:
+                          AppTheme.neonGreen.withAlpha((0.45 * 255).round()),
+                      width: 2,
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(18),
+                    child: Image.asset(
+                      'assets/logo-plantcare.png',
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  'Monitoramento inteligente de plantas',
+                  style: theme.textTheme.bodyMedium,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 14, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: AppTheme.neonGreen.withAlpha((0.15 * 255).round()),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Text(
+                    'Versão 1.0.0',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      color: AppTheme.neonGreenDim,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  'Suas plantas, sempre saudáveis. 🌱',
+                  style: theme.textTheme.bodySmall,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '© 2025 PlantCare Biotech',
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: theme.colorScheme.onSurface
+                        .withAlpha((0.5 * 255).round()),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                TextButton(
+                  onPressed: () => Navigator.of(ctx).pop(),
+                  child: const Text('Fechar'),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   void _showSnackBar(String message, {bool isError = false}) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
@@ -317,7 +405,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Scaffold(
         backgroundColor: colorScheme.surface,
         appBar: AppBar(
-          title: const Text('Meu Perfil'),
+          // === LOGOTIPO OFICIAL (PNG) NO APPBAR ===
+          titleSpacing: 0,
+          title: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: Image.asset(
+              'assets/logo-plantcare.png',
+              width: 36,
+              height: 36,
+            ),
+          ),
           centerTitle: true,
           elevation: 0,
           backgroundColor: colorScheme.surface,
@@ -358,6 +455,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                _buildBrandBanner(theme),
+                const SizedBox(height: 20),
                 _buildAvatar(colorScheme),
                 const SizedBox(height: 24),
                 _buildStatsRow(),
@@ -374,6 +473,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  // ── Brand banner ──────────────────────────────────────────────────────────
+  // Faixa com gradiente + logotipo PNG oficial + tagline, ancorando a marca
+  // no topo do perfil (sem repetir o nome "PlantCare" por já estar na logo).
+  Widget _buildBrandBanner(ThemeData theme) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            AppTheme.neonGreen.withAlpha((0.22 * 255).round()),
+            AppTheme.cyanNeon.withAlpha((0.10 * 255).round()),
+          ],
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+        ),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: AppTheme.neonGreen.withAlpha((0.35 * 255).round()),
+        ),
+      ),
+      child: Row(
+        children: [
+          Image.asset('assets/logo-plantcare.png', width: 68, height: 68),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Text(
+              'Cuidando das suas plantas com inteligência',
+              style: theme.textTheme.bodySmall,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -575,12 +710,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             icon: Icons.info_outline,
             title: 'Sobre o app',
             subtitle: 'PlantCare v1.0.0',
-            onTap: () => showAboutDialog(
-              context: context,
-              applicationName: 'PlantCare',
-              applicationVersion: '1.0.0',
-              applicationLegalese: '© 2025 PlantCare Biotech',
-            ),
+            onTap: _showCustomAbout,
           ),
           const Divider(height: 0, indent: 56),
           _SettingsTile(
@@ -615,7 +745,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 }
 
-// ─── Private helper widgets ──────────────────────────────────────────────────
+// ─── Private helper widgets ─────────────────────────────────────────────────
 
 class _StatChip extends StatelessWidget {
   final IconData icon;
